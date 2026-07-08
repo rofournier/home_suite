@@ -90,6 +90,15 @@ class SocketRealtimeService implements RealtimeService {
   }
 
   @override
+  void wake() {
+    if (_closed || _channel != null) return;
+    _retry?.cancel();
+    _retry = null;
+    _attempt = 0;
+    _open();
+  }
+
+  @override
   Future<void> disconnect() async {
     _closed = true;
     _retry?.cancel();

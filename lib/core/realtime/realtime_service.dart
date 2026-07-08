@@ -20,6 +20,10 @@ abstract interface class RealtimeService {
   Future<void> connect(String householdId);
   Future<void> publish(RealtimeEvent event);
   Future<void> disconnect();
+
+  /// Retour de l'app au premier plan : reconnecte immédiatement si le socket
+  /// est tombé pendant la mise en veille, sans attendre le backoff.
+  void wake();
 }
 
 class NoopRealtimeService implements RealtimeService {
@@ -37,4 +41,7 @@ class NoopRealtimeService implements RealtimeService {
 
   @override
   Future<void> disconnect() async {}
+
+  @override
+  void wake() {}
 }

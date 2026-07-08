@@ -25,6 +25,9 @@ class FakeRealtimeService implements RealtimeService {
   @override
   Future<void> disconnect() async {}
 
+  @override
+  void wake() {}
+
   void emit(RealtimeEvent event) => _controller.add(event);
 
   /// Simule une (re)connexion réussie.
