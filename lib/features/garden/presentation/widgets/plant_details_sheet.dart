@@ -202,8 +202,9 @@ class _Body extends ConsumerWidget {
           style: const TextStyle(color: AppColors.inkSoft, fontSize: 13),
         ),
         const SizedBox(height: AppSpacing.xs),
+        // Seule l'échéance : le « arrosée … par X » vit dans Derniers soins.
         Text(
-          '💧 ${_lastLine(plant, now, nameOf)} · ${wateringDueLabel(plant, now)}',
+          '💧 ${wateringDueLabel(plant, now)}',
           style: TextStyle(
               color: statusColor(status),
               fontSize: 13,
@@ -347,12 +348,6 @@ class _BigPlaceholder extends StatelessWidget {
         color: AppColors.meadow,
         child: Center(child: Text('🪴', style: TextStyle(fontSize: 72))),
       );
-}
-
-String _lastLine(Plant plant, DateTime now, String Function(String) nameOf) {
-  final by = plant.lastWateredBy;
-  final base = lastWateredLabel(plant, now);
-  return by == null ? base : '$base par ${nameOf(by)}';
 }
 
 /// Journal fusionné arrosages 💧 + engrais 🌱, du plus récent au plus ancien.

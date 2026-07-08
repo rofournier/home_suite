@@ -15,8 +15,8 @@ import 'widgets/plant_form_sheet.dart';
 import 'widgets/plant_photo.dart';
 import 'widgets/watering_actions.dart';
 
-/// 🌿 Jardin — les plantes du foyer par pièce, look champêtre. Arrosage
-/// individuel ou par pièce, rappels visuels selon l'échéance.
+/// 🌿 Jardin — les plantes du foyer, un onglet par pièce habitée, look
+/// champêtre. Arrosage individuel ou par pièce, rappels selon l'échéance.
 class GardenScreen extends ConsumerWidget {
   const GardenScreen({super.key});
 
@@ -49,43 +49,91 @@ class GardenScreen extends ConsumerWidget {
               const Center(child: Text('Impossible de charger le jardin')),
           data: (garden) => garden.plants.isEmpty
               ? const _EmptyGarden()
-              : _GardenList(garden: garden),
+              : _GardenTabs(garden: garden),
         ),
       ),
     );
   }
 }
 
-class _GardenList extends ConsumerWidget {
-  const _GardenList({required this.garden});
+class _GardenTabs extends StatelessWidget {
+  const _GardenTabs({required this.garden});
 
   final Garden garden;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final now = DateTime.now();
+    final rooms = garden.roomsWithPlants;
     final thirsty = garden.plants
         .where((p) => wateringStatus(p, now) == WateringStatus.thirsty)
         .length;
     final hungry = garden.plants
         .where((p) => feedingStatus(p, now) == WateringStatus.thirsty)
         .length;
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-          AppSpacing.md, AppSpacing.sm, AppSpacing.md, 96),
-      children: [
-        _DueHeader(thirsty: thirsty, hungry: hungry),
-        for (final room in garden.roomsWithPlants) ...[
-          _RoomHeader(
-            room: room,
-            plants: garden.plantsIn(room),
-            now: now,
-            onWaterAll: () => waterRoomWithUndo(context, ref, room),
+    return DefaultTabController(
+      // Recréé quand l'ensemble des pièces change (plante ajoutée/déplacée).
+      key: ValueKey(rooms.map((r) => r.name).join('|')),
+      length: rooms.length,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.md, AppSpacing.sm, AppSpacing.md, 0),
+            child: _DueHeader(thirsty: thirsty, hungry: hungry),
           ),
-          for (final plant in sortByThirst(garden.plantsIn(room), now))
-            _PlantCard(plant: plant, now: now),
-          const SizedBox(height: AppSpacing.md),
+          TabBar(
+            isScrollable: true,
+            tabAlignment: TabAlignment.start,
+            labelColor: AppColors.ink,
+            unselectedLabelColor: AppColors.inkSoft,
+            indicatorColor: AppColors.sage,
+            dividerColor: AppColors.sand,
+            labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+            tabs: [
+              for (final room in rooms)
+                Tab(text: '${room.label} · ${garden.plantsIn(room).length}'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
+              children: [
+                for (final room in rooms)
+                  _RoomTab(
+                      room: room, plants: garden.plantsIn(room), now: now),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+/// Contenu d'un onglet pièce : « Tout arroser » + plantes triées par soif.
+class _RoomTab extends ConsumerWidget {
+  const _RoomTab({required this.room, required this.plants, required this.now});
+
+  final Room room;
+  final List<Plant> plants;
+  final DateTime now;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(AppSpacing.md, 0, AppSpacing.md, 96),
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => waterRoomWithUndo(context, ref, room),
+            icon: const Icon(Icons.water_drop_outlined, size: 18),
+            label: const Text('Tout arroser'),
+            style: TextButton.styleFrom(foregroundColor: AppColors.sage),
+          ),
+        ),
+        for (final plant in sortByThirst(plants, now))
+          _PlantCard(plant: plant, now: now),
       ],
     );
   }
@@ -120,43 +168,6 @@ class _DueHeader extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
       ),
-    );
-  }
-}
-
-class _RoomHeader extends StatelessWidget {
-  const _RoomHeader({
-    required this.room,
-    required this.plants,
-    required this.now,
-    required this.onWaterAll,
-  });
-
-  final Room room;
-  final List<Plant> plants;
-  final DateTime now;
-  final VoidCallback onWaterAll;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            '${room.label} · ${plants.length}',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium
-                ?.copyWith(color: AppColors.ink),
-          ),
-        ),
-        TextButton.icon(
-          onPressed: onWaterAll,
-          icon: const Icon(Icons.water_drop_outlined, size: 18),
-          label: const Text('Tout arroser'),
-          style: TextButton.styleFrom(foregroundColor: AppColors.sage),
-        ),
-      ],
     );
   }
 }
