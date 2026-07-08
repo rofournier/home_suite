@@ -13,6 +13,12 @@ Future<void> showLeaderboardSheet(BuildContext context, WidgetRef ref) {
   return showModalBottomSheet<void>(
     context: context,
     showDragHandle: true,
+    // En paysage la hauteur par défaut ne montre qu'une ligne : on autorise
+    // la sheet à monter à 85 % de l'écran, la liste scrolle en dessous.
+    isScrollControlled: true,
+    constraints: BoxConstraints(
+      maxHeight: MediaQuery.of(context).size.height * 0.85,
+    ),
     backgroundColor: AppColors.paper,
     builder: (sheetContext) => const SafeArea(child: _Leaderboard()),
   );
@@ -47,8 +53,14 @@ class _Leaderboard extends ConsumerWidget {
                   .titleLarge
                   ?.copyWith(color: AppColors.ink)),
           const SizedBox(height: AppSpacing.md),
-          for (var i = 0; i < rows.length; i++)
-            _Row(rank: i, name: rows[i].name, score: rows[i].score),
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: rows.length,
+              itemBuilder: (_, i) =>
+                  _Row(rank: i, name: rows[i].name, score: rows[i].score),
+            ),
+          ),
         ],
       ),
     );
