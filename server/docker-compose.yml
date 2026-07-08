@@ -1,0 +1,15 @@
+services:
+  hsh-server:
+    build: .
+    restart: unless-stopped
+    ports:
+      # Loopback seulement : c'est nginx qui expose en HTTPS (deploy/).
+      - "127.0.0.1:8090:8080"
+    environment:
+      # OBLIGATOIRE en prod : secret JWT fort et stable.
+      HSH_JWT_SECRET: ${HSH_JWT_SECRET:?définir HSH_JWT_SECRET dans .env}
+    volumes:
+      - hsh-data:/data
+
+volumes:
+  hsh-data:

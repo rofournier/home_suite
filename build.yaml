@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # toJson récursif : les objets imbriqués (List<ShoppingCategory>,
+          # etc.) sont sérialisés en Map, pas laissés en objets Dart.
+          explicit_to_json: true

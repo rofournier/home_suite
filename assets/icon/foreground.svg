@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Icône « Home Sweet Home » : maisonnette lofi warm, formes plates.
+       Art contenu dans la zone sûre adaptive (~centre 66%). -->
+  <g stroke="#33291F" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+    <!-- Soleil doux -->
+    <circle cx="315" cy="312" r="58" fill="#E8C98A"/>
+
+    <!-- Cheminée + fumée -->
+    <circle cx="640" cy="300" r="20" fill="#FBF4E6" stroke="none" opacity="0.85"/>
+    <circle cx="662" cy="262" r="15" fill="#FBF4E6" stroke="none" opacity="0.7"/>
+    <circle cx="638" cy="232" r="11" fill="#FBF4E6" stroke="none" opacity="0.55"/>
+    <rect x="616" y="332" width="46" height="86" rx="8" fill="#9E5740"/>
+
+    <!-- Toit -->
+    <polygon points="300,486 512,300 724,486" fill="#C97B5A"/>
+
+    <!-- Murs -->
+    <rect x="352" y="486" width="320" height="286" rx="22" fill="#FBF4E6"/>
+
+    <!-- Fenêtre éclairée -->
+    <rect x="392" y="540" width="118" height="118" rx="12" fill="#E9A96B"/>
+    <line x1="451" y1="540" x2="451" y2="658"/>
+    <line x1="392" y1="599" x2="510" y2="599"/>
+
+    <!-- Porte + poignée -->
+    <rect x="548" y="612" width="96" height="160" rx="14" fill="#9E5740"/>
+    <circle cx="568" cy="694" r="8" fill="#E8C98A" stroke="none"/>
+
+    <!-- Cœur au-dessus de la porte -->
+    <path d="M596 566 c-14 -18 -44 -8 -44 14 c0 20 30 34 44 46 c14 -12 44 -26 44 -46 c0 -22 -30 -32 -44 -14 z"
+          fill="#C97B5A"/>
+
+    <!-- Buisson -->
+    <ellipse cx="356" cy="772" rx="58" ry="40" fill="#8FA98C"/>
+  </g>
+</svg>
